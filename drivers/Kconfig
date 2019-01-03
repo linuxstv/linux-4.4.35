@@ -1,5 +1,7 @@
 menu "Device Drivers"
 
+source "drivers/hisilicon/Kconfig"
+
 source "drivers/amba/Kconfig"
 
 source "drivers/base/Kconfig"
@@ -197,5 +199,9 @@ source "drivers/hwtracing/stm/Kconfig"
 source "drivers/hwtracing/intel_th/Kconfig"
 
 source "drivers/fpga/Kconfig"
+
+source "drivers/switch/Kconfig"
+
+source "drivers/tee/Kconfig"
 
 endmenu

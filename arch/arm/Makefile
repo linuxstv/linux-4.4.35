@@ -222,6 +222,13 @@ machine-$(CONFIG_ARCH_W90X900)		+= w90x900
 machine-$(CONFIG_ARCH_ZX)		+= zx
 machine-$(CONFIG_ARCH_ZYNQ)		+= zynq
 machine-$(CONFIG_PLAT_SPEAR)		+= spear
+machine-$(CONFIG_ARCH_S40)		+= s40
+machine-$(CONFIG_ARCH_HI3798MX)		+= hi3798mx
+machine-$(CONFIG_ARCH_HI3798CV2X)	+= hi3798cv2x
+machine-$(CONFIG_ARCH_HI3798MV2X)	+= hi3798mv2x
+machine-$(CONFIG_ARCH_HI3798MV310) 	+= hi3798mv310
+machine-$(CONFIG_ARCH_HI3796MV2X)	+= hi3796mv2x
+machine-$(CONFIG_ARCH_HI3716MV420N)	+= hi3716mv420n
 
 # Platform directory name.  This list is sorted alphanumerically
 # by CONFIG_* macro name.
@@ -296,6 +303,8 @@ libs-y				:= arch/arm/lib/ $(libs-y)
 # Default target when executing plain make
 ifeq ($(CONFIG_XIP_KERNEL),y)
 KBUILD_IMAGE := xipImage
+else ifeq ($(CONFIG_BUILD_ARM_APPENDED_DTB_IMAGE),y)
+KBUILD_IMAGE := zImage-dtb
 else
 KBUILD_IMAGE := zImage
 endif
@@ -345,6 +354,9 @@ vdso_install:
 ifeq ($(CONFIG_VDSO),y)
 	$(Q)$(MAKE) $(build)=arch/arm/vdso $@
 endif
+
+zImage-dtb: vmlinux scripts dtbs
+	$(Q)$(MAKE) $(build)=$(boot) MACHINE=$(MACHINE) $(boot)/$@
 
 # We use MRPROPER_FILES and CLEAN_FILES now
 archclean:

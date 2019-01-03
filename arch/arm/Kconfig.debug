@@ -1349,7 +1349,7 @@ config DEBUG_LL_INCLUDE
 	default "debug/zynq.S" if DEBUG_ZYNQ_UART0 || DEBUG_ZYNQ_UART1
 	default "debug/bcm63xx.S" if DEBUG_BCM63XX_UART
 	default "debug/digicolor.S" if DEBUG_DIGICOLOR_UA0
-	default "mach/debug-macro.S"
+	default "mach/debug-macro.S" if !CA_SUPPORT_ADVCA
 
 # Compatibility options for PL01x
 config DEBUG_UART_PL01X
@@ -1459,6 +1459,7 @@ config DEBUG_UART_PHYS
 	default 0xfffb9800 if DEBUG_OMAP1UART3 || DEBUG_OMAP7XXUART3
 	default 0xfffe8600 if DEBUG_BCM63XX_UART
 	default 0xfffff700 if ARCH_IOP33X
+	default HISI_DEBUG_UART_PHYS
 	depends on ARCH_EP93XX || \
 	        DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
 		DEBUG_LL_UART_EFM32 || \
@@ -1556,6 +1557,7 @@ config DEBUG_UART_VIRT
 	default 0xfefff700 if ARCH_IOP33X
 	default 0xff003000 if DEBUG_U300_UART
 	default 0xffd01000 if DEBUG_HIP01_UART
+	default HISI_DEBUG_UART_VIRT
 	default DEBUG_UART_PHYS if !MMU
 	depends on DEBUG_LL_UART_8250 || DEBUG_LL_UART_PL01X || \
 		DEBUG_UART_8250 || DEBUG_UART_PL01X || DEBUG_MESON_UARTAO || \
@@ -1617,6 +1619,14 @@ config EARLY_PRINTK
 	  Say Y here if you want to have an early console using the
 	  kernel low-level debugging functions. Add earlyprintk to your
 	  kernel parameters to enable this console.
+
+config EARLY_PRINTK_DIRECT
+	bool "Early printk direct"
+	depends on DEBUG_LL
+	help
+	  Say Y here if you want to have an early console using the
+	  kernel low-level debugging functions and EARLY_PRINTK is
+	  not early enough.
 
 config ARM_KPROBES_TEST
 	tristate "Kprobes test module"

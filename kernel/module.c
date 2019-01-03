@@ -2876,9 +2876,9 @@ static int check_modinfo(struct module *mod, struct load_info *info, int flags)
 		if (err)
 			return err;
 	} else if (!same_magic(modmagic, vermagic, info->index.vers)) {
-		pr_err("%s: version magic '%s' should be '%s'\n",
-		       mod->name, modmagic, vermagic);
-		return -ENOEXEC;
+		//pr_err("%s: version magic '%s' should be '%s'\n",
+		//       mod->name, modmagic, vermagic);
+		//return -ENOEXEC; zhaobaoen
 	}
 
 	if (!get_modinfo(info, "intree"))
@@ -4132,3 +4132,14 @@ void module_layout(struct module *mod,
 }
 EXPORT_SYMBOL(module_layout);
 #endif
+
+/*
+ * support client modules get system all module start address
+ * this function used by ca run time check function.
+ */
+int module_get_pointer(struct list_head **first)
+{
+	*first = &modules;
+	return 0;
+}
+EXPORT_SYMBOL(module_get_pointer);

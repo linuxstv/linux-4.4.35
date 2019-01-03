@@ -65,8 +65,10 @@ enum {
 
 #ifdef CONFIG_CMA
 #  define is_migrate_cma(migratetype) unlikely((migratetype) == MIGRATE_CMA)
+#  define is_migrate_cma_page(_page) (get_pageblock_migratetype(_page) == MIGRATE_CMA)
 #else
 #  define is_migrate_cma(migratetype) false
+#  define is_migrate_cma_page(_page) false
 #endif
 
 #define for_each_migratetype_order(order, type) \
@@ -361,10 +363,10 @@ struct zone {
 	struct per_cpu_pageset __percpu *pageset;
 
 	/*
-	 * This is a per-zone reserve of pages that should not be
-	 * considered dirtyable memory.
+	 * This is a per-zone reserve of pages that are not available
+	 * to userspace allocations.
 	 */
-	unsigned long		dirty_balance_reserve;
+	unsigned long		totalreserve_pages;
 
 #ifndef CONFIG_SPARSEMEM
 	/*
@@ -381,6 +383,12 @@ struct zone {
 	unsigned long		min_unmapped_pages;
 	unsigned long		min_slab_pages;
 #endif /* CONFIG_NUMA */
+#ifdef CONFIG_CMA_ADVANCE_SHARE
+	int has_cma;
+	int nr_try_cma;
+	int nr_try_movable;
+	int cma_wmark;
+#endif
 
 	/* zone_start_pfn == zone_start_paddr >> PAGE_SHIFT */
 	unsigned long		zone_start_pfn;
@@ -830,6 +838,10 @@ static inline int is_highmem(struct zone *zone)
 struct ctl_table;
 int min_free_kbytes_sysctl_handler(struct ctl_table *, int,
 					void __user *, size_t *, loff_t *);
+#ifdef CONFIG_CMA_ADVANCE_SHARE
+int cma_watermark_sysctl_handler(struct ctl_table *table, int write,
+			void __user *buffer, size_t *length, loff_t *ppos);
+#endif
 extern int sysctl_lowmem_reserve_ratio[MAX_NR_ZONES-1];
 int lowmem_reserve_ratio_sysctl_handler(struct ctl_table *, int,
 					void __user *, size_t *, loff_t *);

@@ -86,6 +86,12 @@ source "net/netlabel/Kconfig"
 
 endif # if INET
 
+config ANDROID_PARANOID_NETWORK
+	bool "Only allow certain groups to create sockets"
+	default y
+	help
+		none
+
 config NETWORK_SECMARK
 	bool "Security Marking"
 	help
@@ -272,6 +278,7 @@ config BQL
 	bool
 	depends on SYSFS
 	select DQL
+	default n if CA_NET_CONFIG && !INET
 	default y
 
 config BPF_JIT
